@@ -1,5 +1,5 @@
-# NCRL
-Successor to QChem
+# NCL
+A Python Library with tools and pipelines to dispatch Nano scale Quantum Chemistry Simulations
 
 
 
