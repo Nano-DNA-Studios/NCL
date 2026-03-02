@@ -1,6 +1,6 @@
 import unittest
 import os
-from ncrl import OrcaCalculation, OrcaInputFile, Molecule
+from ncl import OrcaCalculation, OrcaInputFile, Molecule
 
 class OrcaCalculationTest(unittest.TestCase):
     

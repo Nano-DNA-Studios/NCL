@@ -1,5 +1,5 @@
 import unittest
-from ncrl import OrcaInputFile, Molecule
+from ncl import OrcaInputFile, Molecule
 
 class OrcaInputFileTest(unittest.TestCase):
     

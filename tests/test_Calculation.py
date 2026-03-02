@@ -1,6 +1,6 @@
 import unittest
 import os
-from ncrl import Calculation, InputFile
+from ncl import Calculation, InputFile
 
 class CalculationTests(unittest.TestCase):
     

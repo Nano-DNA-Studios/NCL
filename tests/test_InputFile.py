@@ -1,5 +1,5 @@
 import unittest
-from ncrl import InputFile
+from ncl import InputFile
 
 # Implement DocStrings tomorrow
 class InputFileTest(unittest.TestCase):
