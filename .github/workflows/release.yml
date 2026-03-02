@@ -49,7 +49,7 @@ jobs:
         run: |
           hatch build
 
-      - name: Publish to NCRL on Pypi
+      - name: Publish to NCL on Pypi
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
