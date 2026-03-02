@@ -1,33 +1,74 @@
-from .InputFile import InputFile
 from .Molecule import Molecule
+from .InputFile import InputFile
 
 class OrcaInputFile(InputFile):
 
-    MOLECULE_INPUT: str = "* xyz 0 1 \n&{molecule}\n*"
-    BASIC = "!&{calculation} &{basis} &{functional}"
-    HARTREE_FOCK = "HF"
+    def __init__(self, name : str, molecule: Molecule):
+        super().__init__(name, ".inp", molecule)
 
-    def __init__(self, name : str,  molecule: Molecule):
-        super().__init__(name, ".inp")
-
-        if (not isinstance(molecule, Molecule)):
-            raise TypeError("The Molecule passed in is not of Type Molecule!")
+        self.keywordCommands: list[str] = []
+        self.blocks: dict[str, str] = {}
         
-        self.molecule = molecule
-        self.addStructure(self.MOLECULE_INPUT, molecule=molecule.getContent())
+    def addRoute(self, command: str):
+        """Adds a single command to the route section (e.g., 'Opt')."""
+        if not isinstance(command, str) or len(command.strip()) == 0:
+            raise ValueError("Command must be a non-empty string")
+        self.keywordCommands.append(command.strip())
+        
+    def addBlock(self, block_name: str, content: str):
+        """Adds a detailed block (e.g., '%pal nprocs 8 end')."""
+        if not isinstance(block_name, str) or not isinstance(content, str):
+            raise TypeError("Block name and content must be strings")
+        self.blocks[block_name.strip()] = content.strip()
+        
     
-    def setHartreeFock(self, basis : str, functional : str):
+    def setMethod(self, method: str, basis: str, *extras: str):
+        """Helper to quickly set a generic calculation method."""
+        self.keywordCommands.clear() # Reset in case they call it twice
+        self.addRoute(method.upper())
+        self.addRoute(basis)
+        for extra in extras:
+            self.addRoute(extra)
         
-        if (not isinstance(basis, str)):
-            raise TypeError("The basis must be a string")
+    def setHartreeFock(self, basis: str):
+        """Helper specifically for Hartree-Fock calculations."""
+        if not isinstance(basis, str) or len(basis.strip()) == 0:
+            raise ValueError("The basis must be a non-empty string")
         
-        if (not isinstance(functional, str)):
-            raise TypeError("The functional must be a string")
+        self.setMethod("HF", basis)
+
+    def setParallelProcessing(self, cores: int):
+        """Helper to easily add the parallel processing block."""
+        if cores > 1:
+            self.addBlock("pal", f"nprocs {cores}")
+            
+    def setGeometryOptimization(self, method: str, basis: str, *extras: str):
+        """Helper specifically for Geometry Optimization calculation."""
+        if not isinstance(method, str) or len(method.strip()) == 0:
+            raise ValueError("The method must be a non-empty string")
+            
+        if not isinstance(basis, str) or len(basis.strip()) == 0:
+            raise ValueError("The basis must be a non-empty string")
         
-        if len(basis.strip()) == 0:
-            raise ValueError("The basis cannot be empty")
+        self.setMethod(method, basis, "OPT", *extras)
+            
+    def build(self) -> str:
+        lines = []
         
-        if len(functional.strip()) == 0:
-            raise ValueError("The basis cannot be empty")
+        # 1. Build the Keyword Command Line
+        if self.keywordCommands:
+            keyworkLine = "! " + " ".join(self.keywordCommands)
+            lines.append(keyworkLine)
+            
+        # 2. Build the Blocks Section (%...)
+        for name, content in self.blocks.items():
+            lines.append(f"%{name}")
+            lines.append(content)
+            lines.append("end")
+            
+        # 3. Build the Coordinate Section (* xyz 0 1 ...)
+        lines.append(f"* xyz {self.molecule.charge} {self.molecule.multiplicity}")
+        lines.append(self.molecule.getContent())
+        lines.append("*")
         
-        self.setHeader(self.BASIC, basis = basis, functional = functional, calculation = "HF")
+        return "\n".join(lines)

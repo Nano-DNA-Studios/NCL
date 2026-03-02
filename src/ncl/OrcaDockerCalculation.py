@@ -1,6 +1,7 @@
+import time
 import subprocess
-from .OrcaCalculation import OrcaCalculation
 from .InputFile import InputFile
+from .OrcaCalculation import OrcaCalculation
 
 # Replace the subprocesses with an Actual Docker Object for more in depth and complex stuff
 class OrcaDockerCalculation(OrcaCalculation):
@@ -31,6 +32,8 @@ class OrcaDockerCalculation(OrcaCalculation):
         fullCommand = f'docker run --name {self.containerName} -v "{self.cachePath}":/home/orca {self.imageName} sh -c "cd /home/orca && /Orca/orca {self.getInputFileName()} > {self.getOutputFileName()}"'
 
         self._remove()
+        
+        start = time.time()
 
         subprocess.run(
             fullCommand,
@@ -38,10 +41,12 @@ class OrcaDockerCalculation(OrcaCalculation):
             stderr=subprocess.DEVNULL,
             stdout=subprocess.DEVNULL,
         )
-
+        
+        elapsed = time.time() - start
+        
         self._remove()
         
-        print("Calculation Finished!")
+        print(f"Calculation Finished! : {elapsed} seconds")
 
     def _remove(self):
         """_remove(self)
