@@ -30,55 +30,10 @@ class InputFile(ABC):
         self.extension = extension
         self.molecule = molecule
 
-    # def compile(self, template: str, **args: dict[str, str]):
-
-    #     if not isinstance(template, str):
-    #         raise TypeError("The template must be a string")
-
-    #     if not isinstance(args, dict):
-    #         raise TypeError("The arguments must be of type string")
-
-    #     if len(template.strip()) == 0:
-    #         raise ValueError("The template cannot be empty")
-
-    #     pattern = r"&\{(\w+)\}"
-    #     keys = re.findall(pattern, template)
-
-    #     if len(keys) == 0:
-    #         return template
-
-    #     for key in keys:
-    #         if key not in args:
-    #             raise ValueError(f"Key {key} is not found in Arguments")
-
-    #         template = template.replace(f"&{{{key}}}", args[key])
-
-    #     return template
-
-    # def setHeader(self, header: str = None, **args: dict[str, str]):
-    #     self._header = self.compile(header, **args)
-
-    # def setFooter(self, footer: str = None, **args: dict[str, str]):
-    #     self._footer = self.compile(footer, **args)
-
-    # def addStructure(self, structure: str = None, **args: dict[str, str]):
-    #     self._structures.append(self.compile(structure, **args))
-
     @abstractmethod
     def build(self) -> str:
         """Builds and returns the input file content as a string"""
         pass
-        # if self._header != "":
-        #     fileContent = self._header + "\n"
-        # else:
-        #     fileContent = ""
-
-        # for line in self._structures:
-        #     fileContent += line + "\n"
-
-        # fileContent += self._footer
-
-        # return fileContent5
 
     def save(self, filePath : str):
         """Saves the build Input file to the location specified by filePath"""
