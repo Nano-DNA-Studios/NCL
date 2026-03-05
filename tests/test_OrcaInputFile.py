@@ -7,8 +7,6 @@ class OrcaInputFileTest(unittest.TestCase):
         self.name = "Propane"
         self.filePath = "tests/Resources/Propane.xyz"
         self.molecule = Molecule(self.name, self.filePath)
-        
-        # Mocking properties used in the build method
         self.molecule.charge = 0
         self.molecule.multiplicity = 1 
         
@@ -58,5 +56,4 @@ class OrcaInputFileTest(unittest.TestCase):
             self.inputFile.setHartreeFock("")
             
         with self.assertRaises(ValueError):
-            # My current class throws a ValueError for bad types here
             self.inputFile.setHartreeFock(123)

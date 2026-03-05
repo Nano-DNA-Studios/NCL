@@ -2,7 +2,7 @@ import unittest
 import os
 from ncl import Calculation, InputFile, Molecule
 
-# I use a dummy class because InputFile is abstract
+# Created a dummy class because InputFile is abstract
 class DummyInputFile(InputFile):
     def build(self) -> str:
         return "dummy content"

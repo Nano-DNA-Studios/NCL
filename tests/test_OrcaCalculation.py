@@ -17,7 +17,6 @@ class OrcaCalculationTest(unittest.TestCase):
         
         return super().setUp()
     
-    
     def test_constructor(self):
         
         calculation = OrcaCalculation(self.inputFile)
@@ -31,5 +30,4 @@ class OrcaCalculationTest(unittest.TestCase):
         
         with self.assertRaises(TypeError):
             OrcaCalculation("")
-    
     

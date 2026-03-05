@@ -2,7 +2,7 @@ import unittest
 import os
 from ncl import InputFile, Molecule
 
-# I create a dummy class to test the abstract InputFile class
+# Created a dummy class to test the abstract InputFile class
 class DummyInputFile(InputFile):
     def build(self) -> str:
         return "dummy content"
@@ -14,8 +14,6 @@ class InputFileTest(unittest.TestCase):
         self.extension1 = ".inp"
         self.extension2 = ".lmp"
         self.filePath = "tests/Resources/Propane.xyz"
-        
-        # The base class now requires a Molecule
         self.molecule = Molecule(self.name, self.filePath)
 
     def test_constructor(self):
