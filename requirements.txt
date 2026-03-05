@@ -1,5 +1,6 @@
 colorama==0.4.6
 iniconfig==2.1.0
+-e git+ssh://git@github.com/Nano-DNA-Studios/NCL.git@5e8d29062a62d68ce55593259fef65ab79f17eff#egg=ncl
 numpy==2.3.3
 packaging==25.0
 pandas==2.3.3

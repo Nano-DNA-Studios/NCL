@@ -1,6 +1,12 @@
 # NCL
 A Python Library with tools and pipelines to dispatch Nano scale Quantum Chemistry Simulations
 
+# Installing the Pip Library
+Use the following command to install the library on your device
+```bash
+pip install -e git+ssh://git@github.com/Nano-DNA-Studios/NCL.git@5e8d29062a62d68ce55593259fef65ab79f17eff#egg=ncl
+```
+
 # Setup Development Environment
 To setup your environment run the following commands in your terminal :
 
