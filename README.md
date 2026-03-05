@@ -16,7 +16,7 @@ source venv/Scripts/Activate
 
 Install the required packages :
 ```bash
-python install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 # Authors
