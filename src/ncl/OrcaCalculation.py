@@ -27,8 +27,6 @@ class OrcaCalculation(Calculation):
 
         fullCommand = f"cd {self.cachePath} && {orcaPath} {self.getInputFileName()} > {self.getOutputFileName()}"
 
-        print(fullCommand)
-
         start = time.time()
 
         subprocess.run(
