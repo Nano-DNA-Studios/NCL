@@ -51,6 +51,26 @@ class OrcaInputFile(InputFile):
             raise ValueError("The basis must be a non-empty string")
         
         self.setMethod(method, basis, "OPT", *extras)
+    
+    def setFrequencyCalculation(self, method: str, basis: str, *extras: str):
+        """Helper specifically for Frequency calculation."""
+        if not isinstance(method, str) or len(method.strip()) == 0:
+            raise ValueError("The method must be a non-empty string")
+            
+        if not isinstance(basis, str) or len(basis.strip()) == 0:
+            raise ValueError("The basis must be a non-empty string")
+        
+        self.setMethod(method, basis, "FREQ", *extras)
+        
+    def setSinglePointEnergy(self, method: str, basis: str, *extras: str):
+        """Helper specifically for Single Point Energy calculation."""
+        if not isinstance(method, str) or len(method.strip()) == 0:
+            raise ValueError("The method must be a non-empty string")
+            
+        if not isinstance(basis, str) or len(basis.strip()) == 0:
+            raise ValueError("The basis must be a non-empty string")
+        
+        self.setMethod(method, basis, *extras)
             
     def build(self) -> str:
         lines = []

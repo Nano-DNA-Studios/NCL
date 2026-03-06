@@ -57,3 +57,53 @@ class OrcaInputFileTest(unittest.TestCase):
             
         with self.assertRaises(ValueError):
             self.inputFile.setHartreeFock(123)
+            
+    def test_setGeometryOptimization(self):
+        """Tests the Level 2 Helper Method"""
+        method = "B3LYP"
+        basis = "DEF2-SVP"
+        self.inputFile.setGeometryOptimization(method, basis)
+        
+        self.assertIn("OPT", self.inputFile.keywordCommands)
+        self.assertIn(method, self.inputFile.keywordCommands)
+        self.assertIn(basis, self.inputFile.keywordCommands)
+        
+    def test_setGeometryOptimization_error(self):
+        with self.assertRaises(ValueError):
+            self.inputFile.setGeometryOptimization("", "DEF2-SVP")
+            
+        with self.assertRaises(ValueError):
+            self.inputFile.setGeometryOptimization("B3LYP", "")
+            
+    def test_setFrequencyCalculation(self):
+        """Tests the Level 2 Helper Method"""
+        method = "B3LYP"
+        basis = "DEF2-SVP"
+        self.inputFile.setFrequencyCalculation(method, basis)
+        
+        self.assertIn("FREQ", self.inputFile.keywordCommands)
+        self.assertIn(method, self.inputFile.keywordCommands)
+        self.assertIn(basis, self.inputFile.keywordCommands)
+        
+    def test_setFrequencyCalculation_error(self):
+        with self.assertRaises(ValueError):
+            self.inputFile.setFrequencyCalculation("", "DEF2-SVP")
+            
+        with self.assertRaises(ValueError):
+            self.inputFile.setFrequencyCalculation("B3LYP", "")
+            
+    def test_setSinglePointEnergy(self):
+        """Tests the Level 2 Helper Method"""
+        method = "B3LYP"
+        basis = "DEF2-SVP"
+        self.inputFile.setSinglePointEnergy(method, basis)
+        
+        self.assertIn(method, self.inputFile.keywordCommands)
+        self.assertIn(basis, self.inputFile.keywordCommands)
+        
+    def test_setSinglePointEnergy_error(self):
+        with self.assertRaises(ValueError):
+            self.inputFile.setSinglePointEnergy("", "DEF2-SVP")
+            
+        with self.assertRaises(ValueError):
+            self.inputFile.setSinglePointEnergy("B3LYP", "")
