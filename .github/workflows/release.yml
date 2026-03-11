@@ -51,7 +51,7 @@ jobs:
 
       - name: Publish to NCL on Pypi
         env:
-          TWINE_REPOSITORY_URL: https://pypi.pkg.github.com/${{ github.repository_owner }}/
+          TWINE_REPOSITORY_URL: https://pypi.pkg.github.com/Nano-DNA-Studios/NCL
           TWINE_USERNAME: ${{ github.actor }}
           TWINE_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         run: twine upload --verbose dist/*
