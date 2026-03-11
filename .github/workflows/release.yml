@@ -48,10 +48,17 @@ jobs:
       - name: Build with setup.py using version
         run: |
           hatch build
+      
+      - name: Check Directory
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Contents:"
+          ls -la dist
 
-      - name: Publish to NCL on Pypi
-        env:
-          TWINE_REPOSITORY_URL: https://pypi.pkg.github.com/Nano-DNA-Studios/ncl
-          TWINE_USERNAME: ${{ github.actor }}
-          TWINE_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-        run: twine upload --verbose dist/*
+      #- name: Publish to NCL on Pypi
+      #  env:
+      #    TWINE_REPOSITORY_URL: https://pypi.pkg.github.com/Nano-DNA-Studios/ncl
+      #    TWINE_USERNAME: ${{ github.actor }}
+      #    TWINE_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+      #  run: twine upload --verbose dist/*
+
