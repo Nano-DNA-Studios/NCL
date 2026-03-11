@@ -3,11 +3,11 @@ requires = ["hatchling>=1.21"]
 build-backend = "hatchling.build"
 
 [project]
-name = "ncrl"
+name = "ncl"
 version = "0.0.1"
-description = "A Python Library developed for Nano Car Racing"
+description = "A Python Library developed Quantum Chemistry Calculation Dispatching and Analysis"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.11"
 license = { file = "LICENSE" }
 authors = [{ name = "MrDNAlex", email = "mr.dnalex.2003@gmail.com" }]
 keywords = ["nanotech", "chem", "utils"]
@@ -18,16 +18,20 @@ classifiers = [
 ]
 
 dependencies = [
-    # "numpy>=1.26",
+    "numpy>=1.26",
     "pandas>=2.3.2"
 ]
 
 [project.optional-dependencies]
 dev = ["pytest", "ruff", "mypy", "build", "twine"]
 
+[project.urls]
+Homepage = "https://github.com/Nano-DNA-Studios/NCL"
+Issues = "https://github.com/Nano-DNA-Studios/NCL/issues"
+
 # If you want a CLI: installs a console command named `your-lib`
 [project.scripts]
-ncrl = "your_lib.cli:main"
+ncl = "ncl.main:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/ncrl"]
+packages = ["src/ncl"]

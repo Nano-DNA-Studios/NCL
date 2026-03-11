@@ -3,7 +3,7 @@ import pandas as pd
 
 class Molecule:
 
-    def __init__(self, name: str, filePath: str):
+    def __init__(self, name: str, filePath: str, charge: int = 0, mult: int = 1):
         
         if (not isinstance(name, str)):
             raise TypeError("The name of the Molecule must be a string")
@@ -23,6 +23,8 @@ class Molecule:
         self.name: str = name
         self.filePath: str = filePath
         self.positions: pd.DataFrame = self._readXYZ(filePath)
+        self.charge = charge
+        self.multiplicity = mult
 
     def _readXYZ(self, filePath: str):
         """_readXYZ(self, filePath : str)

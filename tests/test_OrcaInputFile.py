@@ -1,81 +1,109 @@
 import unittest
-from ncrl import OrcaInputFile, Molecule
+from ncl import OrcaInputFile, Molecule
 
 class OrcaInputFileTest(unittest.TestCase):
     
     def setUp(self):
-        
         self.name = "Propane"
         self.filePath = "tests/Resources/Propane.xyz"
-        self.molecule = Molecule(self.name , self.filePath)
-        
-        self.HF_Keyword = "HF"
-        self.basis= "DEF2-SVP"
-        self.functional = "B3LYP"
-        self.HF_Header = "!HF DEF2-SVP B3LYP"
+        self.molecule = Molecule(self.name, self.filePath)
+        self.molecule.charge = 0
+        self.molecule.multiplicity = 1 
         
         self.inputFile = OrcaInputFile(self.name, self.molecule)
-        
-        pass
     
     def test_constructor(self):
-        
-        inputFile = OrcaInputFile(self.name, self.molecule)
-        
-        self.assertEqual(self.name, inputFile.name)
-        self.assertEqual(self.molecule, inputFile.molecule)
-        
-        self.assertEqual("", inputFile._header)
-        self.assertEqual("", inputFile._footer)
-        self.assertEqual(1, len(inputFile._structures))
+        """Tests the initialization of the Orca lists and dicts"""
+        self.assertEqual(self.name, self.inputFile.name)
+        self.assertEqual(self.molecule, self.inputFile.molecule)
+        self.assertListEqual([], self.inputFile.keywordCommands)
+        self.assertDictEqual({}, self.inputFile.blocks)
         
     def test_constructor_error(self):
-        
         with self.assertRaises(TypeError):
             OrcaInputFile(1, self.molecule)
             
         with self.assertRaises(TypeError):
-            OrcaInputFile(self.name, "")
+            OrcaInputFile(self.name, "Not a Molecule")
             
         with self.assertRaises(ValueError):
             OrcaInputFile("", self.molecule)
+            
+    def test_addRoute(self):
+        """Tests adding granular route commands"""
+        self.inputFile.addRoute("Opt")
+        self.assertIn("Opt", self.inputFile.keywordCommands)
         
+    def test_addRoute_error(self):
         with self.assertRaises(ValueError):
-            OrcaInputFile(" ", self.molecule)
+            self.inputFile.addRoute("")
+            
+    def test_addBlock(self):
+        """Tests adding granular blocks"""
+        self.inputFile.addBlock("pal", "nprocs 8")
+        self.assertEqual("nprocs 8", self.inputFile.blocks["pal"])
             
     def test_setHartreeFock(self):
+        """Tests the Level 2 Helper Method"""
+        basis = "DEF2-SVP"
+        self.inputFile.setHartreeFock(basis)
         
-        inputFile = self.inputFile
-        
-        inputFile.setHartreeFock(self.basis, self.functional)
-        
-        self.assertEqual(self.HF_Header, inputFile._header)
-        self.assertTrue(self.HF_Keyword in inputFile._header)
-        self.assertTrue(self.basis in inputFile._header)
-        self.assertTrue(self.functional in inputFile._header)
-        
-        self.assertEqual(1, len(inputFile._structures))
-        
-        self.assertEqual("", inputFile._footer)
+        self.assertIn("HF", self.inputFile.keywordCommands)
+        self.assertIn(basis, self.inputFile.keywordCommands)
         
     def test_setHartreeFock_error(self):
+        with self.assertRaises(ValueError):
+            self.inputFile.setHartreeFock("")
+            
+        with self.assertRaises(ValueError):
+            self.inputFile.setHartreeFock(123)
+            
+    def test_setGeometryOptimization(self):
+        """Tests the Level 2 Helper Method"""
+        method = "B3LYP"
+        basis = "DEF2-SVP"
+        self.inputFile.setGeometryOptimization(method, basis)
         
-        inputFile = self.inputFile
+        self.assertIn("OPT", self.inputFile.keywordCommands)
+        self.assertIn(method, self.inputFile.keywordCommands)
+        self.assertIn(basis, self.inputFile.keywordCommands)
         
-        with self.assertRaises(TypeError):
-            inputFile.setHartreeFock(1, self.functional)
-            
-        with self.assertRaises(TypeError):
-            inputFile.setHartreeFock(self.basis, 1)
+    def test_setGeometryOptimization_error(self):
+        with self.assertRaises(ValueError):
+            self.inputFile.setGeometryOptimization("", "DEF2-SVP")
             
         with self.assertRaises(ValueError):
-            inputFile.setHartreeFock("", self.functional)
+            self.inputFile.setGeometryOptimization("B3LYP", "")
+            
+    def test_setFrequencyCalculation(self):
+        """Tests the Level 2 Helper Method"""
+        method = "B3LYP"
+        basis = "DEF2-SVP"
+        self.inputFile.setFrequencyCalculation(method, basis)
+        
+        self.assertIn("FREQ", self.inputFile.keywordCommands)
+        self.assertIn(method, self.inputFile.keywordCommands)
+        self.assertIn(basis, self.inputFile.keywordCommands)
+        
+    def test_setFrequencyCalculation_error(self):
+        with self.assertRaises(ValueError):
+            self.inputFile.setFrequencyCalculation("", "DEF2-SVP")
             
         with self.assertRaises(ValueError):
-            inputFile.setHartreeFock(self.basis, "")
+            self.inputFile.setFrequencyCalculation("B3LYP", "")
+            
+    def test_setSinglePointEnergy(self):
+        """Tests the Level 2 Helper Method"""
+        method = "B3LYP"
+        basis = "DEF2-SVP"
+        self.inputFile.setSinglePointEnergy(method, basis)
+        
+        self.assertIn(method, self.inputFile.keywordCommands)
+        self.assertIn(basis, self.inputFile.keywordCommands)
+        
+    def test_setSinglePointEnergy_error(self):
+        with self.assertRaises(ValueError):
+            self.inputFile.setSinglePointEnergy("", "DEF2-SVP")
             
         with self.assertRaises(ValueError):
-            inputFile.setHartreeFock(" ", self.functional)
-            
-        with self.assertRaises(ValueError):
-            inputFile.setHartreeFock(self.basis, " ")
+            self.inputFile.setSinglePointEnergy("B3LYP", "")

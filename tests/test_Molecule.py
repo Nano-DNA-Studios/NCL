@@ -1,6 +1,6 @@
 import unittest
 import re
-from ncrl import Molecule
+from ncl import Molecule
 
 class MolecueTest(unittest.TestCase):
 

@@ -20,4 +20,3 @@ class ICalculation(ABC):
     def getOutputFileName(self):
         pass
         
-        
