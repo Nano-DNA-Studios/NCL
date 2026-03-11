@@ -7,7 +7,7 @@ name = "ncl"
 version = "0.0.1"
 description = "A Python Library developed Quantum Chemistry Calculation Dispatching and Analysis"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 license = { file = "LICENSE" }
 authors = [{ name = "MrDNAlex", email = "mr.dnalex.2003@gmail.com" }]
 keywords = ["nanotech", "chem", "utils"]
