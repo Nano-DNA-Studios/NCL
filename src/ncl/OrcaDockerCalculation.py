@@ -1,7 +1,9 @@
+import os
 import time
 import subprocess
 from .InputFile import InputFile
 from .OrcaCalculation import OrcaCalculation
+from .OrcaCalculationResults import OrcaCalculationResults
 
 # Replace the subprocesses with an Actual Docker Object for more in depth and complex stuff
 class OrcaDockerCalculation(OrcaCalculation):
@@ -35,18 +37,32 @@ class OrcaDockerCalculation(OrcaCalculation):
         
         start = time.time()
 
-        subprocess.run(
-            fullCommand,
-            shell=True,
-            stderr=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,
-        )
+        try:
+            subprocess.run(
+                fullCommand,
+                shell=True,
+                stderr=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL,
+            )
+            
+        except:
+            print(f"An Error Occured during the calculation")
+            
+            self._remove()
+            
+            elapsed = time.time() - start
+            
+            return OrcaCalculationResults(elapsed, "Failure")
         
         elapsed = time.time() - start
         
         self._remove()
         
-        print(f"Calculation Finished! : {self.calculationTime(elapsed)}")
+        calculationResults = OrcaCalculationResults(elapsed, "Success", outputFilePath = os.path.join(self.cachePath, self.getOutputFileName()))
+
+        print(f"Calculation Finished! : {calculationResults.getCalculationTime()}")
+        
+        return calculationResults
 
     def _remove(self):
         """_remove(self)

@@ -4,7 +4,7 @@ import shutil
 import subprocess
 from .InputFile import InputFile
 from .Calculation import Calculation
-
+from .OrcaCalculationResults import OrcaCalculationResults
 
 class OrcaCalculation(Calculation):
 
@@ -16,28 +16,35 @@ class OrcaCalculation(Calculation):
     def calculate(self):
         self.setup()
 
-        orcaPath = shutil.which("orca")
-
-        if orcaPath is None:
-            raise RuntimeError("Could not find Orca in the PATH.")
-        
         print(
             f"Running Calculation using the following Input File : \n {self.inputFile.build()}"
         )
 
-        fullCommand = f"cd {self.cachePath} && {orcaPath} {self.getInputFileName()} > {self.getOutputFileName()}"
+        fullCommand = f"cd {self.cachePath} && {self.getOrcaPath()} {self.getInputFileName()} > {self.getOutputFileName()}"
 
         start = time.time()
 
-        subprocess.run(
-            fullCommand,
-            shell=True,
-            stderr=subprocess.DEVNULL,
-        )
+        try:
+            subprocess.run(
+                fullCommand,
+                shell=True,
+                stderr=subprocess.DEVNULL,
+            )
 
+        except:
+            print(f"An Error Occured during the calculation")
+            
+            elapsed = time.time() - start
+            
+            return OrcaCalculationResults(elapsed, "Failure")
+        
         elapsed = time.time() - start
+        
+        calculationResults = OrcaCalculationResults(elapsed, "Success", outputFilePath = os.path.join(self.cachePath, self.getOutputFileName()))
 
-        print(f"Calculation Finished! : {self.calculationTime(elapsed)}")
+        print(f"Calculation Finished! : {calculationResults.getCalculationTime()}")
+        
+        return calculationResults
         
     def setup(self):
         super().setup()
@@ -46,3 +53,12 @@ class OrcaCalculation(Calculation):
             os.makedirs(self.cachePath)
 
         self.inputFile.save(self.cachePath)
+        
+    def getOrcaPath(self):
+        
+        orcaPath = shutil.which("orca")
+
+        if orcaPath is None:
+            raise RuntimeError("Could not find Orca in the PATH.")
+
+        return orcaPath
