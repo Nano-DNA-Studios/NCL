@@ -42,3 +42,18 @@ class CalculationTests(unittest.TestCase):
         calculation = Calculation(self.inputFile)
         with self.assertRaises(NotImplementedError):
             calculation.calculate()
+            
+    def test_calculationTime(self):
+        calculation = Calculation(self.inputFile)
+        self.assertEqual("1 second", calculation.calculationTime(1))
+        self.assertEqual("2 seconds", calculation.calculationTime(2))
+        
+        self.assertEqual("1 minute", calculation.calculationTime(60))
+        self.assertEqual("2 minutes", calculation.calculationTime(120))
+        
+        self.assertEqual("1 hour", calculation.calculationTime(3600))
+        self.assertEqual("2 hours", calculation.calculationTime(3600*2))
+        
+        self.assertEqual("1 day", calculation.calculationTime(86400))
+        self.assertEqual("2 days", calculation.calculationTime(86400 *2))
+        

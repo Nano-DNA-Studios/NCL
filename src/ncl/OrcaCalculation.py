@@ -37,8 +37,8 @@ class OrcaCalculation(Calculation):
 
         elapsed = time.time() - start
 
-        print(f"Calculation Finished! : {elapsed} seconds")
-
+        print(f"Calculation Finished! : {self.calculationTime(elapsed)}")
+        
     def setup(self):
         super().setup()
 

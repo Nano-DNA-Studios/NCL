@@ -46,7 +46,7 @@ class OrcaDockerCalculation(OrcaCalculation):
         
         self._remove()
         
-        print(f"Calculation Finished! : {elapsed} seconds")
+        print(f"Calculation Finished! : {self.calculationTime(elapsed)}")
 
     def _remove(self):
         """_remove(self)
