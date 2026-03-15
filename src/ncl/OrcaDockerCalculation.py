@@ -58,8 +58,10 @@ class OrcaDockerCalculation(OrcaCalculation):
         
         self._remove()
         
-        calculationResults = OrcaCalculationResults(elapsed, "Success", outputFilePath = os.path.join(self.cachePath, self.getOutputFileName()))
+        calculationResults = OrcaCalculationResults(elapsed, "Success")
 
+        calculationResults.outputFilePath = os.path.join(self.cachePath, self.getOutputFileName())
+        
         print(f"Calculation Finished! : {calculationResults.getCalculationTime()}")
         
         return calculationResults

@@ -40,7 +40,9 @@ class OrcaCalculation(Calculation):
         
         elapsed = time.time() - start
         
-        calculationResults = OrcaCalculationResults(elapsed, "Success", outputFilePath = os.path.join(self.cachePath, self.getOutputFileName()))
+        calculationResults = OrcaCalculationResults(elapsed, "Success")
+
+        calculationResults.outputFilePath = os.path.join(self.cachePath, self.getOutputFileName())
 
         print(f"Calculation Finished! : {calculationResults.getCalculationTime()}")
         
