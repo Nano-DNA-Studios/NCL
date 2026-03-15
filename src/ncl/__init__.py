@@ -7,4 +7,4 @@ from .OrcaCalculation import OrcaCalculation
 from .OrcaDockerCalculation import OrcaDockerCalculation
 from .CalculationResults import CalculationResults
 from .OrcaCalculationResults import OrcaCalculationResults
-from .OrcaOutput import OrcaOutputFile
+from .OrcaOutputFile import OrcaOutputFile
