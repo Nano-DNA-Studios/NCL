@@ -2,8 +2,8 @@ import os
 import time
 import shutil
 import subprocess
-from .InputFile import InputFile
-from .Calculation import Calculation
+from ..InputFile import InputFile
+from ..Calculation import Calculation
 from .OrcaCalculationResults import OrcaCalculationResults
 
 class OrcaCalculation(Calculation):

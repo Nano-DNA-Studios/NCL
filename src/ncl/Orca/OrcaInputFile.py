@@ -1,5 +1,5 @@
-from .Molecule import Molecule
-from .InputFile import InputFile
+from ..Molecule import Molecule
+from ..InputFile import InputFile
 
 class OrcaInputFile(InputFile):
 

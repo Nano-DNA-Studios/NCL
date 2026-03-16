@@ -1,7 +1,7 @@
 import os
 import time
 import subprocess
-from .InputFile import InputFile
+from ..InputFile import InputFile
 from .OrcaCalculation import OrcaCalculation
 from .OrcaCalculationResults import OrcaCalculationResults
 

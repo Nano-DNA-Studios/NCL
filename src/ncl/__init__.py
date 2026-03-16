@@ -2,9 +2,26 @@ from .ICalculation import ICalculation
 from .Calculation import Calculation
 from .Molecule import Molecule
 from .InputFile import InputFile
-from .OrcaInputFile import OrcaInputFile
-from .OrcaCalculation import OrcaCalculation
-from .OrcaDockerCalculation import OrcaDockerCalculation
 from .CalculationResults import CalculationResults
-from .OrcaCalculationResults import OrcaCalculationResults
-from .OrcaOutputFile import OrcaOutputFile
+
+# Import from the Orca sub-package
+from .Orca import (
+    OrcaInputFile,
+    OrcaCalculation,
+    OrcaDockerCalculation,
+    OrcaCalculationResults,
+    OrcaOutputFile
+)
+
+__all__ = [
+    "ICalculation",
+    "Calculation",
+    "Molecule",
+    "InputFile",
+    "CalculationResults",
+    "OrcaInputFile",
+    "OrcaCalculation",
+    "OrcaDockerCalculation",
+    "OrcaCalculationResults",
+    "OrcaOutputFile",
+]
