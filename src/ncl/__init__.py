@@ -3,6 +3,7 @@ from .Calculation import Calculation
 from .Molecule import Molecule
 from .InputFile import InputFile
 from .CalculationResults import CalculationResults
+from .Constants import CovalentRadiiConstants, AtomicMassConstants
 
 # Import from the Orca sub-package
 from .Orca import (
@@ -24,4 +25,6 @@ __all__ = [
     "OrcaDockerCalculation",
     "OrcaCalculationResults",
     "OrcaOutputFile",
+    "CovalentRadiiConstants",
+    "AtomicMassConstants"
 ]
