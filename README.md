@@ -25,5 +25,8 @@ Install the required packages :
 pip install -r requirements.txt
 ```
 
+# Note
+A majority of the code here was previously developed by MrDNAlex for a different project, some of it may need to be rewritten since they were developed years ago 
+
 # Authors
 MrDNAlex : mr.dnalex.2003@gmail.com
