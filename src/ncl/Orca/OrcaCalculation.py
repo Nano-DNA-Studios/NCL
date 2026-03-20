@@ -14,6 +14,11 @@ class OrcaCalculation(Calculation):
         self.cachePath = os.path.join(self.baseCachePath, "Orca", inputFile.name)
 
     def calculate(self):
+        """Runs the Orca Calculation through the Local Executable
+        
+        Returns : 
+            OrcaCalculationResults - A Calculation Result Object with the path to the output file, calculation statistics and other Orca specific stats  
+        """
         self.setup()
 
         print(
@@ -57,7 +62,11 @@ class OrcaCalculation(Calculation):
         self.inputFile.save(self.cachePath)
         
     def getOrcaPath(self):
+        """Finds the path to the Orca Executable.
         
+        Returns :
+            str - The absolute path to the Orca Executable on the device
+        """
         orcaPath = shutil.which("orca")
 
         if orcaPath is None:

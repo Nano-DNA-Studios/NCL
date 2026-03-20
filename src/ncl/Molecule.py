@@ -27,14 +27,12 @@ class Molecule:
         self.multiplicity = mult
 
     def _readXYZ(self, filePath: str):
-        """_readXYZ(self, filePath : str)
+        """Extracts the Atom type and XYZ Coordinates from a `.xyz` file, returns the structure as a Pandas Dataframe
 
-        Extracts the Atom type and XYZ Coordinates from a `.xyz` file, returns the structure as a Pandas Dataframe
-
-        Parameters:
+        Parameters :
             filePath (str) - The path to the XYZ File to load
 
-        Returns:
+        Returns :
             pd.Dataframe - Pandas Dataframe containing the following Columns, [Atom, X, Y, Z], where XYZ are the Positions
         """
 
@@ -50,5 +48,10 @@ class Molecule:
         )
         
     def getContent(self) -> str:
+        """Gets the Atomic Element and Atomic Coordinates of the molecule in string format
+        
+        Returns :
+            str - The Atomic Element and Coordinates in a large string in the following format [Element X Y Z]
+        """
         return self.positions.to_string(header=False, index=False)
         

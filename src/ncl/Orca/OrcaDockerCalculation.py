@@ -9,9 +9,7 @@ from .OrcaCalculationResults import OrcaCalculationResults
 class OrcaDockerCalculation(OrcaCalculation):
 
     def __init__(self, inputFile: InputFile):
-        """Constructor for OrcaDockerEngine
-
-        Initializes a new Instance of the Engine. Used to run a Orca Calculation inside a Docker Container
+        """Initializes a new Instance of the Engine. Used to run a Orca Calculation inside a Docker Container
 
         Parameters:
             calcFileName (str) - The name of the Calculation, used to name the Input file and Output file
@@ -22,10 +20,11 @@ class OrcaDockerCalculation(OrcaCalculation):
         self.containerName = "ncrlorca"
         self.imageName = "mrdnalex/orca"
 
-    def calculate(self):
-        """calculate(self)
-
-        Runs the Orca Calculation through a Docker Container and cleans itself up
+    def calculate(self) -> OrcaCalculationResults:
+        """Runs the Orca Calculation through a Docker Container and cleans itself up
+        
+        Returns : 
+            OrcaCalculationResults - A Calculation Result Object with the path to the output file, calculation statistics and other Orca specific stats  
         """
         super().setup()
 
@@ -67,10 +66,7 @@ class OrcaDockerCalculation(OrcaCalculation):
         return calculationResults
 
     def _remove(self):
-        """_remove(self)
-
-        Stops and Removes the Docker Container if it's running
-        """
+        """Stops and Removes the Docker Container if it's running"""
         subprocess.run(
             f"docker kill {self.containerName}",
             shell=True,

@@ -15,10 +15,10 @@ class CalculationResults:
     def getCalculationTime(self):
         """Gets the Calculation time in Human Readable Clock Format
 
-        ## Parameters : \n
+        Parameters : 
             self - Default Parameter for the Class Instance \n
 
-        ## Returns : \n
+        Returns : 
             str - The time in a clock format (x days : y hours : z mins : a sec)
         """
         # Convert Seconds to Hours, Minutes, and Seconds
