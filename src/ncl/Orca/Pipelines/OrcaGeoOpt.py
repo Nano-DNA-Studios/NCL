@@ -89,7 +89,7 @@ class OrcaGeoOpt(Calculation):
             # Check if Molecule is Optimized and Complete Calculation if so
             outputFile = OrcaOutputFile(result.outputFilePath)
             
-            if (self.isOptimized(outputFile.IRFrequencies["frequency"])):
+            if (self.isOptimized(outputFile.IRFrequencies["frequency"]) or result.status == "Failure"):
                 optimized = True
                 break
                 
@@ -100,7 +100,7 @@ class OrcaGeoOpt(Calculation):
         elapsed = time.time() - start
         
         # Create the Results object and return it
-        calcResults = OrcaGeoOptCalculationResults(elapsed, "Success")
+        calcResults = OrcaGeoOptCalculationResults(elapsed, result.status)
         calcResults.outputFilePath = result.outputFilePath
         calcResults.initial = self.initialMolecule
         calcResults.final = currentMolecule
