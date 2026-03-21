@@ -1,7 +1,8 @@
 import re
 import os
+import numpy as np
 import pandas as pd
-
+import matplotlib.pyplot as plt
 
 class OrcaOutputFile:
     """Represents an Orca Output File, used to Parse information from the Output File"""
@@ -148,15 +149,15 @@ class OrcaOutputFile:
                     if len(parts) >= 2:
                         freqs.append(
                             {
-                                "mode": int(parts[0].strip(":")),
-                                "frequency": float(parts[1]),
+                                "Mode": int(parts[0].strip(":")),
+                                "Wavenumber": float(parts[1]),
                             }
                         )
                     startIdx += 1
 
         # Return empty DataFrame if no frequencies found
         if len(freqs) == 0:
-            return pd.DataFrame(columns=["mode", "frequency"])
+            return pd.DataFrame(columns=["Mode", "Wavenumber"])
         return pd.DataFrame(freqs)
 
     def getGibbsEnergy(self) -> tuple:
@@ -232,8 +233,8 @@ class OrcaOutputFile:
                     if len(parts) >= 7:  # Mode, freq, eps, Int, T**2, TX, TY, TZ
                         freqs.append(
                             {
-                                "mode": int(parts[0].strip(":")),
-                                "frequency": float(parts[1]),
+                                "Mode": int(parts[0].strip(":")),
+                                "Wavenumber": float(parts[1]),
                                 "IRIntensity": float(parts[3]),  # km/mol
                             }
                         )
@@ -313,3 +314,73 @@ class OrcaOutputFile:
 
             # Add to the Conformer List
             self.conformers.append(molecule)
+
+    def gaussianBlur(self, data: list[float], sigma: float):
+        """Applies a Gaussian Blur to the Inputted Data
+        
+        Parameters :
+            data (list[float]) - List of data to apply a Gaussian Blur to
+            sigma (float) - Standard Deviation or Spread of the Gaussian used to blur the data
+            
+        Returns :
+            list[float] - List of the Blurred Data
+        """
+        
+        size = int(len(data))
+        halfSize = size // 2
+        
+        # Create a normalized Gaussian Kernel for Convolution
+        kernel = np.exp(-np.linspace(-halfSize, halfSize, size)**2 / (2 * sigma**2))
+        kernel = kernel / kernel.sum()
+        
+        paddedData = np.pad(data, len(kernel) // 2, mode="reflect")
+        
+        return np.convolve(paddedData, kernel, mode="valid")[:len(data)]
+        
+    def getProcessedIRSpectra(self, sigma:float = 5):
+        """Processes the IR Spectra by padding the raw Wavenumbers and Intensities and applying a Gaussian Blur and Inverting the values
+        
+        Parameters :
+            sigma (float) - The Standard Deviation or spread of the Gaussian Blur applied to the data
+            
+        Returns :
+            pandas.DataFrame - A Padded DataFrame with the IR Spectra Inverted and Blurred with a Gaussian
+        """
+        if (self.IRFrequencies is None):
+            raise RuntimeError("IR Frequencies have not been Calculated, cannot process data.")
+        
+        IRSpectra = self.IRFrequencies
+        
+        for i in range(0, 4300, 1):
+            IRSpectra.loc[len(IRSpectra)] = [0, i, 0]
+        
+        # Group Common Wavenumbers and Sort the DataFrame
+        IRSpectra.groupby("Wavenumber", as_index=False).agg({"IRIntensity": "sum"})
+        IRSpectra = IRSpectra.sort_values(by="Wavenumber", ascending=False)
+        
+        # Apply Gaussian Blur
+        IRSpectra["IRIntensity"] = self.gaussianBlur(IRSpectra["IRIntensity"].to_list(), sigma)
+        
+        # Normalize and Inverse the Intensity
+        IRSpectra["IRIntensity"] = 1 - (
+            IRSpectra["IRIntensity"].values / max(IRSpectra["IRIntensity"].values)
+        )
+        
+        return IRSpectra
+        
+    def plotIRSpectra(self, sigma :float = 5):
+        """Quickly Plots and Displays the Processed IR Spectra Graph
+        
+        Parameters :
+            sigma (float) - The Standard Deviation or spread of the Gaussian Blur applied to the data
+        """
+        IRSpectra = self.getProcessedIRSpectra(sigma)
+        
+        # Plots the Spectra
+        plt.figure()
+        plt.plot(IRSpectra["Wavenumber"], IRSpectra["IRIntensity"])
+        plt.xlabel("Wavenumber (1/cm)")
+        plt.ylabel("IR Intensity")
+        plt.gca().invert_xaxis()
+        plt.show()
+        
