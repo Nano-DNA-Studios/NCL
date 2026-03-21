@@ -1,7 +1,7 @@
 import os
 import time
 from ncl import Calculation, Molecule
-from ncl.Orca import OrcaCalculationResults, OrcaDockerCalculation, OrcaInputFile, OrcaOutputFile
+from ncl.Orca import OrcaCalculation, OrcaCalculationResults, OrcaDockerCalculation, OrcaInputFile, OrcaOutputFile
 
 class OrcaGeoOptCalculationResults(OrcaCalculationResults):
     
@@ -34,7 +34,10 @@ class OrcaGeoOpt(Calculation):
     extras: tuple[str, ...]
     """Stores extra Keywords and commands for the calculation""" 
     
-    def __init__(self, molecule: Molecule, method: str, basis: str, *extras: str):
+    useDocker: bool
+    """Toggle indicating to use the Orca Docker Image or the Local Orca Software"""
+    
+    def __init__(self, molecule: Molecule, method: str, basis: str, *extras: str, useDocker: bool = True):
         
         self.initialMolecule = molecule
         self.initialMolecule.name = self.initialMolecule.name + "-GeoOpt"
@@ -42,6 +45,7 @@ class OrcaGeoOpt(Calculation):
         self.method = method
         self.basis = basis
         self.extras = extras
+        self.useDocker = useDocker
         self.iterations = []
         self.iterations.append(self.initialMolecule)
         
@@ -73,7 +77,7 @@ class OrcaGeoOpt(Calculation):
             index += 1
             
             # Run the Calculation
-            calculation = OrcaDockerCalculation(self.inputFile)
+            calculation = OrcaDockerCalculation(self.inputFile) if self.useDocker else OrcaCalculation(self.inputFile)
             calculation.cachePath = os.path.join(self.cachePath, self.inputFile.name)
             result = calculation.calculate()
             
