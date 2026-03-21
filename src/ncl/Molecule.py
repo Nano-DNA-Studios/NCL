@@ -1,7 +1,7 @@
 import os
 import numpy as np
-from numpy.random import random
 import pandas as pd
+from numpy.random import random
 from .Constants import CovalentRadiiConstants, AtomicMassConstants
 
 class Molecule:
