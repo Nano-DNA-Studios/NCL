@@ -375,7 +375,7 @@ class Molecule:
         
         Parameters :
             atomIndex1 (int) - Index of the First Atom 
-            atomIndex2 (int) - Index of the Second Atom, is the commonly shared Atom 
+            atomIndex2 (int) - Index of the Second Atom (MUST BE COMMONLY SHARED BETWEEN ATOM 1 AND 3)
             atomIndex3 (int) - Index of the Third Atom 
 
         Returns :
