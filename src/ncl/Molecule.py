@@ -517,7 +517,7 @@ class Molecule:
             # Create the String for Bonds
             bonds = ""
             for j in self.bonds["Bonds"][i]:
-                bonds += str(j + 1) + " "
+                bonds += str(j) + " "
 
             # Create String for Bond Distance
             bondDist = ""
@@ -535,5 +535,5 @@ class Molecule:
             # Print Line to Screen
             print(
                 " %4i   %-2s - %s    %4s  %2s"
-                % (index + 1, atom, bonds, bondDist, rotatable)
+                % (index, atom, bonds, bondDist, rotatable)
             )
