@@ -57,3 +57,18 @@ class CalculationResultsTests(unittest.TestCase):
         
         calculationResultsSec = CalculationResults(86400 * 2, self.statusSuccess)
         self.assertEqual("2 days", calculationResultsSec.getCalculationTime())
+        
+    def test_getCalculationTime_combined(self):
+        """Tests that the calculation time formats combined times and zero correctly"""
+        
+        # Test 0 seconds
+        calculationResultsZero = CalculationResults(0, self.statusSuccess)
+        self.assertEqual("0 seconds", calculationResultsZero.getCalculationTime())
+        
+        # Test combined singular units (1 day, 1 hour, 1 minute, 1 second = 90061 seconds)
+        calculationResultsSingular = CalculationResults(90061, self.statusSuccess)
+        self.assertEqual("1 day, 1 hour, 1 minute, 1 second", calculationResultsSingular.getCalculationTime())
+        
+        # Test combined plural units (2 days, 3 hours, 4 minutes, 5 seconds = 183845 seconds)
+        calculationResultsPlural = CalculationResults(183845, self.statusSuccess)
+        self.assertEqual("2 days, 3 hours, 4 minutes, 5 seconds", calculationResultsPlural.getCalculationTime())

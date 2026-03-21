@@ -15,9 +15,6 @@ class CalculationResults:
     def getCalculationTime(self):
         """Gets the Calculation time in Human Readable Clock Format
 
-        Parameters : 
-            self - Default Parameter for the Class Instance \n
-
         Returns : 
             str - The time in a clock format (x days : y hours : z mins : a sec)
         """
