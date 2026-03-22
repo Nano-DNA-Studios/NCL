@@ -89,7 +89,7 @@ class OrcaGeoOpt(Calculation):
             # Check if Molecule is Optimized and Complete Calculation if so
             outputFile = OrcaOutputFile(result.outputFilePath)
             
-            if (self.isOptimized(outputFile.IRFrequencies["frequency"]) or result.status == "Failure"):
+            if (self.isOptimized(outputFile.IRFrequencies["Wavelength"]) or result.status == "Failure"):
                 optimized = True
                 break
                 
