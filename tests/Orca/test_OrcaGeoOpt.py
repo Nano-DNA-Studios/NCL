@@ -109,7 +109,7 @@ class OrcaGeoOptTest(unittest.TestCase):
 
             # 3. Setup Mock Output File (All positive frequencies forces loop to break)
             mockOutInstance = mockOutputFile.return_value
-            mockOutInstance.IRFrequencies = {"frequency": [100.0, 200.0]}
+            mockOutInstance.IRFrequencies = {"Wavenumber": [100.0, 200.0]}
 
             # Run the calculation
             results = calc.calculate()
@@ -146,7 +146,7 @@ class OrcaGeoOptTest(unittest.TestCase):
 
             # Negative frequency would normally continue the loop, but Failure overrides
             mockOutInstance = mockOutputFile.return_value
-            mockOutInstance.IRFrequencies = {"frequency": [-50.0]} 
+            mockOutInstance.IRFrequencies = {"Wavenumber": [-50.0]} 
 
             results = calc.calculate()
 
