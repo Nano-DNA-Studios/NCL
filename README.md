@@ -4,7 +4,7 @@ A Python Library with tools and pipelines to dispatch Nano scale Quantum Chemist
 # Installing the Pip Library
 Use the following command to install the library on your device
 ```bash
-pip install -e git+ssh://git@github.com/Nano-DNA-Studios/NCL.git@5e8d29062a62d68ce55593259fef65ab79f17eff#egg=ncl
+pip install -e git+ssh://git@github.com/Nano-DNA-Studios/NCL.git#egg=ncl
 ```
 
 # Setup Development Environment
@@ -24,6 +24,9 @@ Install the required packages :
 ```bash
 pip install -r requirements.txt
 ```
+
+# Note
+A majority of the code here was previously developed by MrDNAlex for a different project, some of it may need to be rewritten since they were developed years ago 
 
 # Authors
 MrDNAlex : mr.dnalex.2003@gmail.com

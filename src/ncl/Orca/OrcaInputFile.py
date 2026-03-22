@@ -1,5 +1,5 @@
-from .Molecule import Molecule
-from .InputFile import InputFile
+from ..Molecule import Molecule
+from ..InputFile import InputFile
 
 class OrcaInputFile(InputFile):
 
@@ -20,7 +20,6 @@ class OrcaInputFile(InputFile):
         if not isinstance(block_name, str) or not isinstance(content, str):
             raise TypeError("Block name and content must be strings")
         self.blocks[block_name.strip()] = content.strip()
-        
     
     def setMethod(self, method: str, basis: str, *extras: str):
         """Helper to quickly set a generic calculation method."""

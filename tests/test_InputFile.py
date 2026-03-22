@@ -1,5 +1,6 @@
 import unittest
 import os
+import tempfile
 from ncl import InputFile, Molecule
 
 # Created a dummy class to test the abstract InputFile class
@@ -15,6 +16,8 @@ class InputFileTest(unittest.TestCase):
         self.extension2 = ".lmp"
         self.filePath = "tests/Resources/Propane.xyz"
         self.molecule = Molecule(self.name, self.filePath)
+        
+        self.testDirectory = tempfile.TemporaryDirectory()
 
     def test_constructor(self):
         """Tests the Constructor for the InputFile Class"""
@@ -46,3 +49,21 @@ class InputFileTest(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             DummyInputFile(self.name, "inp", self.molecule)
+            
+    def test_save(self):
+        """Tests that the save method writes the built content to the correct file path"""
+        inputFile = DummyInputFile(self.name, self.extension1, self.molecule)
+        
+        # Trigger the save function, targeting our temporary directory
+        inputFile.save(self.testDirectory.name)
+        
+        expectedFilePath = os.path.join(self.testDirectory.name, self.name + self.extension1)
+        
+        # Verify the file was actually created
+        self.assertTrue(os.path.exists(expectedFilePath))
+        
+        # Verify the contents of the file match what build() is supposed to output
+        with open(expectedFilePath, "r") as f:
+            saved_content = f.read()
+            
+        self.assertEqual("dummy content", saved_content)

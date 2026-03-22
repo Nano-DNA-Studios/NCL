@@ -1,5 +1,6 @@
-import unittest
 import os
+import unittest
+from unittest.mock import patch
 from ncl import Calculation, InputFile, Molecule
 
 # Created a dummy class because InputFile is abstract
@@ -42,3 +43,29 @@ class CalculationTests(unittest.TestCase):
         calculation = Calculation(self.inputFile)
         with self.assertRaises(NotImplementedError):
             calculation.calculate()
+    
+    @patch('os.makedirs')
+    @patch('os.path.exists')
+    def test_setup_creates_directory(self, mockExists, mockMkdir):
+        """Tests that setup creates the cache directory if it does not exist"""
+        # Tell the mock that the directory does NOT exist
+        mockExists.return_value = False
+        
+        calculation = Calculation(self.inputFile)
+        calculation.setup()
+        
+        # Verify os.mkdir was called exactly once with the correct path
+        mockMkdir.assert_called_once_with(self.baseCachePath, exist_ok=True)
+        
+    @patch('os.mkdir')
+    @patch('os.path.exists')
+    def test_setup_directory_exists(self, mockExists, mockMkdir):
+        """Tests that setup does not create a directory if it already exists"""
+        # Tell the mock that the directory ALREADY exists
+        mockExists.return_value = True
+        
+        calculation = Calculation(self.inputFile)
+        calculation.setup()
+        
+        # Verify os.mkdir was never called
+        mockMkdir.assert_not_called()

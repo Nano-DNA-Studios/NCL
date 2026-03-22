@@ -17,7 +17,7 @@ class Calculation(ICalculation):
     
     def setup(self):
         if (not os.path.exists(self.baseCachePath)):
-            os.mkdir(self.baseCachePath)
+            os.makedirs(self.baseCachePath, exist_ok=True)
     
     def getInputFileName(self):
         return self.inputFile.name + self.inputFile.extension

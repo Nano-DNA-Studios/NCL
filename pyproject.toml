@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "ncl"
 version = "0.0.1"
-description = "A Python Library developed Quantum Chemistry Calculation Dispatching and Analysis"
+description = "A Python Library developed for Quantum Chemistry Calculation Dispatching, Data Processing and Analysis"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { file = "LICENSE" }
@@ -19,7 +19,8 @@ classifiers = [
 
 dependencies = [
     "numpy>=1.26",
-    "pandas>=2.3.2"
+    "pandas>=2.3.2",
+    "matplotlib>=3.10.8"
 ]
 
 [project.optional-dependencies]

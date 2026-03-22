@@ -107,3 +107,63 @@ class OrcaInputFileTest(unittest.TestCase):
             
         with self.assertRaises(ValueError):
             self.inputFile.setSinglePointEnergy("B3LYP", "")
+            
+    def test_addBlock_error(self):
+        """Tests that addBlock throws TypeErrors for invalid non-string inputs"""
+        with self.assertRaises(TypeError):
+            self.inputFile.addBlock(123, "content")
+            
+        with self.assertRaises(TypeError):
+            self.inputFile.addBlock("pal", 123)
+
+    def test_setMethod(self):
+        """Tests the base setMethod clearing, uppercasing, and *extras appending logic"""
+        # Add a dummy command to ensure it gets cleared
+        self.inputFile.addRoute("OldCommand")
+        
+        self.inputFile.setMethod("b3lyp", "def2-svp", "TightSCF", "Grid5")
+        
+        self.assertNotIn("OldCommand", self.inputFile.keywordCommands)
+        self.assertIn("B3LYP", self.inputFile.keywordCommands) # Checks forced uppercase
+        self.assertIn("def2-svp", self.inputFile.keywordCommands)
+        self.assertIn("TightSCF", self.inputFile.keywordCommands)
+        self.assertIn("Grid5", self.inputFile.keywordCommands)
+
+    def test_setParallelProcessing(self):
+        """Tests the parallel processing block generator logic"""
+        # Should ignore requests for 1 or fewer cores
+        self.inputFile.setParallelProcessing(1)
+        self.assertNotIn("pal", self.inputFile.blocks)
+        
+        # Should build the block for > 1 cores
+        self.inputFile.setParallelProcessing(8)
+        self.assertIn("pal", self.inputFile.blocks)
+        self.assertEqual("nprocs 8", self.inputFile.blocks["pal"])
+
+    def test_build(self):
+        """Tests the final string generation of the Orca input file"""
+        # Setup a dummy calculation state
+        self.inputFile.setSinglePointEnergy("B3LYP", "DEF2-SVP")
+        self.inputFile.setParallelProcessing(4)
+        
+        outputString = self.inputFile.build()
+        lines = outputString.split("\n")
+        
+        # 1. Verify the Keyword Command Line
+        self.assertTrue(lines[0].startswith("! B3LYP DEF2-SVP"))
+        
+        # 2. Verify the Block Section
+        self.assertIn("%pal", lines)
+        self.assertIn("nprocs 4", lines)
+        
+        # Since order in dicts can vary slightly, we just verify "end" exists
+        self.assertIn("end", lines)
+        
+        # 3. Verify the Coordinate Section
+        self.assertIn(f"* xyz {self.molecule.charge} {self.molecule.multiplicity}", lines)
+        
+        # Verify the actual atom content made it into the string
+        self.assertIn(self.molecule.getContent(), outputString)
+        
+        # Verify it terminates properly
+        self.assertTrue(outputString.strip().endswith("*"))
