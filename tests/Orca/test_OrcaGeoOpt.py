@@ -47,16 +47,17 @@ class OrcaGeoOptTest(unittest.TestCase):
         self.assertEqual(calc.initialMolecule, calc.iterations[0])
         self.assertIsNotNone(calc.inputFile)
 
-    @patch('os.mkdir')
+    @patch('os.makedirs')
     @patch('os.path.exists')
-    def test_setup(self, mockExists, mockMkdir):
+    def test_setup(self, mockExists, mockMakedirs):
         """Tests that setup correctly creates the nested cache path"""
         mockExists.return_value = False
         
         calc = OrcaGeoOpt(self.molecule, "B3LYP", "DEF2-SVP")
         calc.setup()
         
-        mockMkdir.assert_called_with(calc.cachePath)
+        # Add the exist_ok=True to match your new code implementation
+        mockMakedirs.assert_called_with(calc.cachePath, exist_ok=True)
 
     def test_isOptimized(self):
         """Tests the optimization check logic based on vibrational frequencies"""

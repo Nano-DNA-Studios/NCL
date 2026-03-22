@@ -46,8 +46,10 @@ class OrcaCalculationTest(unittest.TestCase):
         calculation = OrcaCalculation(self.inputFile)
         calculation.setup()
         
-        # Verify os.makedirs was called for the Orca specific cache path
-        mockMakedirs.assert_called_once_with(self.cachePath)
+        # Verify the target path was in the last call made to makedirs
+        args, kwargs = mockMakedirs.call_args
+        self.assertEqual(args[0], self.cachePath)
+        
         # Verify the input file save method was called
         mockSave.assert_called_once_with(self.cachePath)
 

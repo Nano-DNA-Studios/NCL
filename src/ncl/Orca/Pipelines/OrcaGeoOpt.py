@@ -56,7 +56,7 @@ class OrcaGeoOpt(Calculation):
         super().setup()
             
         if (not os.path.exists(self.cachePath)):
-            os.mkdir(self.cachePath)
+            os.makedirs(self.cachePath, exist_ok=True)
             
     def calculate(self):
         """Runs an Iterative Geometry Optimization on the selected molecule. It will repeatedly optimize the Molecule until it is mathematically Optimized

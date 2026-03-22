@@ -44,7 +44,7 @@ class CalculationTests(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             calculation.calculate()
     
-    @patch('os.mkdir')
+    @patch('os.makedirs')
     @patch('os.path.exists')
     def test_setup_creates_directory(self, mockExists, mockMkdir):
         """Tests that setup creates the cache directory if it does not exist"""
@@ -55,7 +55,7 @@ class CalculationTests(unittest.TestCase):
         calculation.setup()
         
         # Verify os.mkdir was called exactly once with the correct path
-        mockMkdir.assert_called_once_with(self.baseCachePath)
+        mockMkdir.assert_called_once_with(self.baseCachePath, exist_ok=True)
         
     @patch('os.mkdir')
     @patch('os.path.exists')
