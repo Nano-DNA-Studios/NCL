@@ -537,3 +537,29 @@ class Molecule:
                 " %4i   %-2s - %s    %4s  %2s"
                 % (index, atom, bonds, bondDist, rotatable)
             )
+            
+    def applyDisplacements(self, displacements: np.ndarray, stepSize: float = 0.1):
+        """Applies a set of 3D displacement vectors to the molecule's atomic coordinates.
+        
+        Parameters:
+            displacements (np.ndarray) - An N x 3 numpy array containing the X, Y, and Z movement vectors.
+            stepSize (float) - A scalar value to multiply the displacements by. Default is 0.1.
+        """
+        # Check that the array matches our atom count
+        if displacements.shape != (self.atomCount, 3):
+            raise ValueError(f"Expected displacements of shape ({self.atomCount}, 3), but got {displacements.shape}")
+            
+        # Extract the current X, Y, Z values as a 2D numpy array
+        currentCoords = self.positions[["X", "Y", "Z"]].values
+        
+        # Scale the movement and calculate the new positions
+        scaledDisplacements = displacements * stepSize
+        newCoords = currentCoords + scaledDisplacements
+        
+        # Overwrite the DataFrame columns with the new values
+        self.positions["X"] = newCoords[:, 0]
+        self.positions["Y"] = newCoords[:, 1]
+        self.positions["Z"] = newCoords[:, 2]
+        
+        # Recompute bonds because the atoms have moved and distances changed
+        self.bonds = self.getBonds()

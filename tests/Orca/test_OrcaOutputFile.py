@@ -9,14 +9,21 @@ class OrcaOutputFileTest(unittest.TestCase):
 
     def setUp(self):
         self.fileName = "Propane-GeoOpt"
-        # Update this path if the output file is located elsewhere in your project!
         self.filePath = "tests/Resources/Propane-GeoOpt.out" 
+        
+        self.fileName2 = "Acetaminophen-GeoOpt"
+        self.filePath2 = "tests/Resources/Acetaminophen-GeoOpt.out" 
         
         # Safely check if the file exists so the test suite doesn't crash on setup
         if os.path.exists(self.filePath):
             self.outputFile = OrcaOutputFile(self.filePath)
         else:
             self.skipTest(f"Test file {self.filePath} not found. Update path to run tests.")
+            
+        if os.path.exists(self.filePath2):
+            self.outputFile2 = OrcaOutputFile(self.filePath2)
+        else:
+            self.skipTest(f"Test file {self.filePath2} not found. Update path to run tests.")
 
     def test_constructor(self):
         """Tests the OrcaOutputFile constructor and attribute initialization"""
@@ -130,3 +137,76 @@ class OrcaOutputFileTest(unittest.TestCase):
         mockYlabel.assert_called_once_with("IR Intensity")
         mockGca.assert_called_once()
         mockShow.assert_called_once()
+        
+    def test_getNumberOfAtoms(self):
+        """Tests that the parser correctly finds the atom count using real files."""
+        # Propane has 11 atoms
+        propaneAtoms = self.outputFile.getNumberOfAtoms()
+        self.assertEqual(11, propaneAtoms)
+        
+        # Acetaminophen has 20 atoms
+        acetaminophenAtoms = self.outputFile2.getNumberOfAtoms()
+        self.assertEqual(20, acetaminophenAtoms)
+
+    def test_getNormalModes(self):
+        """Tests the parsing of the normal modes block into a DataFrame using real files."""
+        # Propane should have 33 degrees of freedom
+        dfPropane = self.outputFile.getNormalModes()
+        self.assertIsInstance(dfPropane, pd.DataFrame)
+        self.assertEqual((33, 33), dfPropane.shape)
+        self.assertIn("Mode_0", dfPropane.columns)
+        self.assertIn("Mode_32", dfPropane.columns)
+        
+        # Acetaminophen should have 60 degrees of freedom
+        dfAcetaminophen = self.outputFile2.getNormalModes()
+        self.assertIsInstance(dfAcetaminophen, pd.DataFrame)
+        self.assertEqual((60, 60), dfAcetaminophen.shape)
+        self.assertIn("Mode_59", dfAcetaminophen.columns)
+
+    def test_getImaginaryModeDisplacements(self):
+        """Tests extracting and reshaping the imaginary mode vector using a real file."""
+        # Acetaminophen contains an imaginary mode, it should return a 20x3 coordinate matrix
+        vectors = self.outputFile2.getImaginaryModeDisplacements()
+        
+        self.assertIsInstance(vectors, np.ndarray)
+        self.assertEqual((20, 3), vectors.shape)
+        
+        # Verify that the matrix actually contains movement data (not just empty zeros)
+        self.assertTrue(np.any(vectors != 0))
+
+    def test_getImaginaryModeDisplacements_noImaginaryString(self):
+        """Tests that a real file with only real frequencies returns None."""
+        # Propane does not have any imaginary frequencies, so it should safely return None
+        vectors = self.outputFile.getImaginaryModeDisplacements()
+        self.assertIsNone(vectors)
+
+    def test_getNumberOfAtoms_notFound(self):
+        """Tests that missing atom count data gracefully returns 0."""
+        # This requires a mock because both real files contain atom counts
+        self.outputFile.lines = [
+            "This is a dummy file.\n",
+            "It does not contain the atom count string.\n"
+        ]
+        atomCount = self.outputFile.getNumberOfAtoms()
+        self.assertEqual(0, atomCount)
+
+    def test_getNormalModes_notFound(self):
+        """Tests that a missing NORMAL MODES section gracefully returns None."""
+        # This requires a mock because both real files contain normal modes
+        self.outputFile.lines = [
+            "Some geometry optimization data...\n",
+            "No vibrational data is present here.\n"
+        ]
+        df = self.outputFile.getNormalModes()
+        self.assertIsNone(df)
+
+    def test_getImaginaryModeDisplacements_missingDataFrame(self):
+        """Tests the safeguard when the imaginary mode string exists, but the DataFrame failed to parse."""
+        # This requires a mock to simulate a partial file corruption
+        self.outputFile.lines = [
+            "  0: ***imaginary mode***\n",
+        ]
+        self.outputFile.normalModes = None # Simulate DataFrame failure
+        
+        vectors = self.outputFile.getImaginaryModeDisplacements()
+        self.assertIsNone(vectors)

@@ -67,6 +67,7 @@ class OrcaGeoOpt(Calculation):
         self.setup()
         
         index = 1
+        scale = 0.1
         optimized = False
         currentMolecule = self.initialMolecule
         start = time.time()
@@ -84,15 +85,21 @@ class OrcaGeoOpt(Calculation):
             # Get the latest Molecule and Append to the list
             optimizedMoleculePath = os.path.join(calculation.cachePath, calculation.inputFile.name + ".xyz")
             currentMolecule = Molecule(f"{self.initialMolecule.name}-{index}", optimizedMoleculePath)
-            self.iterations.append(currentMolecule)
             
             # Check if Molecule is Optimized and Complete Calculation if so
             outputFile = OrcaOutputFile(result.outputFilePath)
             
-            if (self.isOptimized(outputFile.IRFrequencies["Wavenumber"]) or result.status == "Failure"):
+            if (self.isOptimized(outputFile.vibrationalFrequencies["Wavenumber"]) or result.status == "Failure"):
                 optimized = True
+                self.iterations.append(currentMolecule)
                 break
-                
+            
+            # Apply Translational to solve Imaginary Frequencies
+            currentScale = min(scale, 0.3)
+            currentMolecule.applyDisplacements(outputFile.getImaginaryModeDisplacements(), currentScale)
+            self.iterations.append(currentMolecule)
+            scale += 0.05
+            
             # Create Input file for next Calculation Iteration
             self.inputFile = self.getGeoOptInputFile(currentMolecule, index)
             print(f"Starting Iteration {index} of Geometry Optimization")
