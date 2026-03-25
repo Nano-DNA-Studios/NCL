@@ -23,6 +23,7 @@ class OrcaOutputFile:
         self.calculationTypes = self.getCalculationTypes()
 
         # Extract basic calculation data
+        self.atomNum = self.getNumberOfAtoms()
         self.SCFEnergies = self.getSCFEnergies()
         self.finalTimings = self.getFinalTimings()
         self.mayerPopulation = self.getMayerPopulation()
@@ -33,6 +34,7 @@ class OrcaOutputFile:
 
         # Extract calculation-specific data based on type
         self.vibrationalFrequencies = self.getVibrationalFrequencies() if "FREQ" in self.calculationTypes else None
+        self.normalModes = self.getNormalModes() if "FREQ" in self.calculationTypes else None
         self.IRFrequencies = self.getIRFrequencies() if "FREQ" in self.calculationTypes else None
         self.chemicalShifts = self.getChemicalShifts() if "NMR" in self.calculationTypes else None
         self.conformers = self.getConformerInfo() if "GOAT" in self.calculationTypes else None
@@ -384,3 +386,92 @@ class OrcaOutputFile:
         plt.gca().invert_xaxis()
         plt.show()
         
+    def getNumberOfAtoms(self) -> int:
+        """Extracts the number of Atoms Present in the Molecule"""
+        
+        for line in self.lines:
+            if "Number of atoms" in line:
+                return int(line.split()[-1])
+        
+        return 0
+    
+    def getNormalModes(self) -> pd.DataFrame:
+        """Extracts the Normal Modes matrix from the output file."""
+        startIdx = -1
+        
+        # Find where the NORMAL MODES section begins
+        for i, line in enumerate(self.lines):
+            if "NORMAL MODES" in line and "------------" in self.lines[i+1]:
+                startIdx = i + 6 # Skip the headers and text
+                break
+                
+        if startIdx == -1:
+            return None
+            
+        numDof = self.atomNum * 3
+        modesMatrix = np.zeros((numDof, numDof))
+        
+        # Parse the data blocks
+        i = startIdx
+        while i < len(self.lines):
+            line = self.lines[i].strip()
+            
+            # Stop if we hit the next major section
+            if "IR SPECTRUM" in line or line.startswith("------"):
+                break
+                
+            # Skip empty lines
+            if not line:
+                i += 1
+                continue
+                
+            parts = line.split()
+            
+            # Check if this is a column header line (all integers, no decimals)
+            if all("." not in p for p in parts) and parts[0].isdigit():
+                modeIndices = [int(p) for p in parts]
+                
+                # Read the data rows for these specific columns
+                for j in range(numDof):
+                    i += 1
+                    dataParts = self.lines[i].split()
+                    coordIdx = int(dataParts[0])
+                    values = [float(x) for x in dataParts[1:]]
+                    
+                    # Store values in our 2D array
+                    for colIdx, val in zip(modeIndices, values):
+                        modesMatrix[coordIdx, colIdx] = val
+            i += 1
+            
+        # Convert to a Pandas DataFrame
+        columns = [f"Mode_{j}" for j in range(numDof)]
+        return pd.DataFrame(modesMatrix, columns=columns)
+
+    def getImaginaryModeDisplacements(self) -> np.ndarray:
+        """Determines the XYZ displacement vectors to remove the imaginary frequency."""
+        imaginaryModeIdx = -1
+        
+        # Find the index of the imaginary frequency
+        for line in self.lines:
+            if "***imaginary mode***" in line:
+                parts = line.split(":")
+                imaginaryModeIdx = int(parts[0].strip())
+                break
+                
+        if imaginaryModeIdx == -1:
+            print("No imaginary mode found in this file.")
+            return None
+            
+        # Grab the full normal modes DataFrame
+        normalModesDf = self.normalModes
+        if normalModesDf is None:
+            return None
+            
+        # Extract the specific column for our imaginary mode
+        modeColName = f"Mode_{imaginaryModeIdx}"
+        modeVector1D = normalModesDf[modeColName].values
+        
+        # Reshape the 1D array into an N x 3 grid
+        displacementVectors = modeVector1D.reshape((self.atomNum, 3))
+        
+        return displacementVectors
