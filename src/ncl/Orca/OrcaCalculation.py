@@ -57,7 +57,7 @@ class OrcaCalculation(Calculation):
         super().setup()
 
         if not os.path.exists(self.cachePath):
-            os.makedirs(self.cachePath)
+            os.makedirs(self.cachePath, exist_ok=True)
 
         self.inputFile.save(self.cachePath)
         
