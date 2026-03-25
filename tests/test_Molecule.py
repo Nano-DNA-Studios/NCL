@@ -190,3 +190,30 @@ class MolecueTest(unittest.TestCase):
             success = False
             
         self.assertTrue(success, "rotateBond threw an unexpected exception.")
+        
+    def test_applyDisplacements_success(self):
+        """Tests that valid displacement vectors update the coordinates correctly."""
+        molecule = Molecule(self.name, self.filePath)
+        
+        # Create a dummy displacement array of 1.0s for all N atoms
+        displacements = np.ones((self.atomNum, 3))
+        
+        # Save original first atom X coordinate
+        originalX = molecule.positions["X"][0]
+        
+        # Apply displacements with a step size of 0.5
+        molecule.applyDisplacements(displacements, stepSize=0.5)
+        
+        # Check if the new coordinate equals original + (1.0 * 0.5)
+        newX = molecule.positions["X"][0]
+        self.assertAlmostEqual(originalX + 0.5, newX)
+
+    def test_applyDisplacements_shapeError(self):
+        """Tests that a poorly shaped displacement array raises a ValueError."""
+        molecule = Molecule(self.name, self.filePath)
+        
+        # Create a bad array (wrong number of atoms, e.g., N-1)
+        badDisplacements = np.ones((self.atomNum - 1, 3))
+        
+        with self.assertRaises(ValueError):
+            molecule.applyDisplacements(badDisplacements)
