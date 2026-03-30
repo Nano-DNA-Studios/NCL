@@ -210,3 +210,31 @@ class OrcaOutputFileTest(unittest.TestCase):
         
         vectors = self.outputFile.getImaginaryModeDisplacements()
         self.assertIsNone(vectors)
+        
+    def test_getTotalEnthalpy(self):
+        """Tests that the parser correctly finds the Total Enthalpy using real files."""
+        
+        enthalpyPropane = self.outputFile.getTotalEnthalpy()
+        self.assertAlmostEqual(-118.85492720, enthalpyPropane)
+        
+        enthalpyAcetaminophen = self.outputFile2.getTotalEnthalpy()
+        self.assertAlmostEqual(-514.34167352, enthalpyAcetaminophen)
+    
+    def test_getThermalEnthalpyCorrection(self):
+        """Tests that the parser correctly finds the Thermal Enthalpy Correction using real files."""
+        
+        enthalpyPropane = self.outputFile.getThermalEnthalpyCorrection()
+        self.assertAlmostEqual(0.00094421, enthalpyPropane)
+        
+        enthalpyAcetaminophen = self.outputFile2.getThermalEnthalpyCorrection()
+        self.assertAlmostEqual(0.00094421, enthalpyAcetaminophen)
+        
+    def test_getTotalThermalEnergy(self):
+        """Tests that the parser correctly finds the Total Thermal Energy using real files."""
+        
+        enthalpyPropane = self.outputFile.getTotalThermalEnergy()
+        self.assertAlmostEqual(-118.85587141, enthalpyPropane)
+        
+        enthalpyAcetaminophen = self.outputFile2.getTotalThermalEnergy()
+        self.assertAlmostEqual(-514.34261773, enthalpyAcetaminophen)
+        
