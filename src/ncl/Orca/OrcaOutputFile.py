@@ -475,3 +475,46 @@ class OrcaOutputFile:
         displacementVectors = modeVector1D.reshape((self.atomNum, 3))
         
         return displacementVectors
+    
+    def getTotalEnthalpy(self) -> float:
+        """Extracts the Total Enthalpy in Hartrees
+        
+        Returns:
+            (float) - Total Enthalpy of the Molecule in Hartrees
+        """
+        for i, line in enumerate(self.lines):
+            if ("ENTHALPY" in line and "--------" in self.lines[i+1]):
+                index = i + 8
+                value = self.lines[index].split("...")[1].strip() 
+                value = value.removesuffix("Eh")
+                value = float(value)
+                return value
+            
+    def getTotalThermalEnergy(self) -> float:
+        """Extracts the Total Thermal Energy in Hartrees
+        
+        Returns:
+            (float) - Total Thermal Energy of the Molecule in Hartrees
+        """
+        for i, line in enumerate(self.lines):
+            if ("ENTHALPY" in line and "--------" in self.lines[i+1]):
+                index = i + 5
+                value = self.lines[index].split("...")[1].strip() 
+                value = value.removesuffix("Eh")
+                value = float(value)
+                return value
+            
+    def getThermalEnthalpyCorrection(self) -> float:
+        """Extracts the Thermal Enthalpy Correction in Hartrees
+        
+        Returns:
+            (float) - Thermal Enthalpy Correction of the Molecule in Hartrees
+        """
+        for i, line in enumerate(self.lines):
+            if ("ENTHALPY" in line and "--------" in self.lines[i+1]):
+                index = i + 6
+                value = self.lines[index].split("...")[1].strip()
+                value = value.split("Eh")[0].strip()
+                value = float(value)
+                return value
+                
