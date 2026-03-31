@@ -36,6 +36,9 @@ class OrcaOutputFile:
         self.vibrationalFrequencies = self.getVibrationalFrequencies() if "FREQ" in self.calculationTypes else None
         self.normalModes = self.getNormalModes() if "FREQ" in self.calculationTypes else None
         self.IRFrequencies = self.getIRFrequencies() if "FREQ" in self.calculationTypes else None
+        self.totalThermalEnergy = self.getTotalThermalEnergy() if "FREQ" in self.calculationTypes else None
+        self.totalEnthalpy = self.getTotalEnthalpy() if "FREQ" in self.calculationTypes else None
+        self.thermalEnthalpyCorrection = self.getThermalEnthalpyCorrection() if "FREQ" in self.calculationTypes else None
         self.chemicalShifts = self.getChemicalShifts() if "NMR" in self.calculationTypes else None
         self.conformers = self.getConformerInfo() if "GOAT" in self.calculationTypes else None
         self.GOATSummary = self.getGoatSummary() if "GOAT" in self.calculationTypes else None
