@@ -237,4 +237,26 @@ class OrcaOutputFileTest(unittest.TestCase):
         
         enthalpyAcetaminophen = self.outputFile2.getTotalThermalEnergy()
         self.assertAlmostEqual(-514.34261773, enthalpyAcetaminophen)
+    
+    def test_getTotalTime(self):
+        """Tests that the total run time is correctly extracted and converted to seconds."""
+        self.outputFile.lines = [
+            "Timings for individual modules:\n",
+            "TOTAL RUN TIME: 0 days 0 hours 1 minutes 8 seconds 233 msec\n",
+            "ORCA TERMINATED NORMALLY\n"
+        ]
+         
+        totalTime = self.outputFile.getTotalTime()
+
+        self.assertAlmostEqual(68.233, totalTime)
+
+    def test_getTotalTime_notFound(self):
+        """Tests that a missing total run time gracefully returns 0.0."""
+        # Mocking a file that crashed before printing the time
+        self.outputFile.lines = [
+            "Fatal error in ORCA\n",
+            "ORCA TERMINATED WITH AN ERROR\n"
+        ]
         
+        totalTime = self.outputFile.getTotalTime()
+        self.assertEqual(0.0, totalTime)

@@ -26,6 +26,7 @@ class OrcaOutputFile:
         self.atomNum = self.getNumberOfAtoms()
         self.SCFEnergies = self.getSCFEnergies()
         self.finalTimings = self.getFinalTimings()
+        self.totalTime = self.getTotalTime()
         self.mayerPopulation = self.getMayerPopulation()
         self.loedwin = self.getLoewdinCharges()
         self.dipole = self.getDipoleVector()
@@ -74,6 +75,24 @@ class OrcaOutputFile:
                 df = pd.DataFrame([line.split("...") for line in timeLines], columns=["Timing", "Time"])
                 df[["Time", "B"]] = df["Time"].str.split("sec", n=1, expand=True)
                 return df.drop(["B"], axis=1)
+
+    def getTotalTime(self) -> float:
+        """Extracts the total calculation time in seconds"""
+        for i, line in enumerate(self.lines[-5:]):
+            if (line.strip().startswith("TOTAL RUN TIME")):
+                parts = line.split()
+
+                # Extract Values
+                days = int(parts[3])
+                hours = int(parts[5])
+                minutes = int(parts[7])
+                seconds = int(parts[9])
+                msec = int(parts[11])
+                
+                # Convert all units to total seconds
+                return (days * 86400) + (hours * 3600) + (minutes * 60) + seconds + (msec / 1000.0)
+            
+        return 0.0
 
     def getFinalEnergy(self) -> float:
         """Extract final single-point energy from output."""
